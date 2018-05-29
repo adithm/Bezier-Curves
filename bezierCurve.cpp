@@ -1,7 +1,7 @@
 /*
-author : Aadith
+author 	  : Aadith
 reference : https://www.youtube.com/watch?v=dXECQRlmIaE
-compile : g++ -std=c++14 filename.cpp -lGL -lGLU -lglut
+compile   :	g++ -std=c++14 filename.cpp -lGL -lGLU -lglut
 */
 
 #include <bits/stdc++.h>
@@ -81,6 +81,7 @@ void drawStick() {
 	glFlush();
 }
 
+// Animate function
 void work() {
 	clrscr();
 	drawStick();
@@ -90,13 +91,15 @@ void work() {
 	solve();
 	usleep(20000);
 	itr += incVal;
-	if (itr > 15)		incVal = -0.2;
-	else if (itr < 0)	incVal = 0.2;
+	if (itr > 15)		incVal = -0.1;
+	else if (itr < 0)	incVal = 0.1;
+	glutSwapBuffers();
 	glutPostRedisplay();
 }
 
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DOUBLE);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(500, 500);
 	glutCreateWindow("bezier");
