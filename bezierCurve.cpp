@@ -1,7 +1,7 @@
 /*
 author 	  : Aadith
 reference : https://www.youtube.com/watch?v=dXECQRlmIaE
-compile   :	g++ -std=c++14 filename.cpp -lGL -lGLU -lglut
+compile   : g++ -std=c++14 filename.cpp -lGL -lGLU -lglut
 */
 
 #include <bits/stdc++.h>
