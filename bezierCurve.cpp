@@ -17,19 +17,11 @@ double X0, Y0, X1, Y1, X2, Y2, itr = 0, incVal = 0.2;
 void clrscr() {
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glFlush();
-}
-
-void init() {
-	glMatrixMode(GL_PROJECTION);
-	gluOrtho2D(0, 500, 0, 500);
-	clrscr();
-	glMatrixMode(GL_MODELVIEW);
 }
 
 // divides the line joining points (_X1, _Y1) and (_X2, _Y2) into stp (global varialbe) parts
 // and returns the starting point of dLen'th part
-pair<double, double> fP(double _X1, double _Y1, double _X2, double _Y2, int dLen) {
+pair<double, double> findPoint(double _X1, double _Y1, double _X2, double _Y2, int dLen) {
 	double m = (_Y2 - _Y1) / (_X2 - _X1);
 	double c = _Y1 - m * _X1;
 	double seg = abs(_X2 - _X1) / stp;
@@ -40,24 +32,24 @@ pair<double, double> fP(double _X1, double _Y1, double _X2, double _Y2, int dLen
 
 void solve() {
 	pair<double, double> pcur, pprev;
-	vector<array<double, 2>> pts1(stp + 1), pts2(stp + 1);
-	for (int i = 0; i <= stp; i++) {
-		pcur = fP(X0, Y0, X1, Y1, i);
-		pts1[i][0] = pcur.first;
-		pts1[i][1] = pcur.second;
+	vector< pair<double, double> > pts1(stp + 1), pts2(stp + 1);
 
-		pcur = fP(X1, Y1, X2, Y2, i);
-		pts2[i][0] = pcur.first;
-		pts2[i][1] = pcur.second;
+	for (int i = 0; i <= stp; i++) {
+		pts1[i] = findPoint(X0, Y0, X1, Y1, i);
+		pts2[i] = findPoint(X1, Y1, X2, Y2, i);
 	}
 
 	for (int i = 0; i <= stp; i++) {
-		pcur = fP(pts1[i][0], pts1[i][1], pts2[i][0], pts2[i][1], i);
+
+		pcur = findPoint(pts1[i].first, pts1[i].second, pts2[i].first, pts2[i].second, i);
+
 		if (i != 0) {
 			for (int thick = 0; thick < 210; thick++) {
-				if (thick < 70)	glColor3f(1, 0.5, 0);		// orange
+
+				if (thick < 70)		glColor3f(1, 0.5, 0);	// orange
 				else if (thick < 140)	glColor3f(1, 1, 1);	// white
-				else	glColor3f(0, 1, 0);					// green
+				else			glColor3f(0, 1, 0);	// green
+
 				glBegin(GL_LINES);
 					glVertex2d(pprev.first, pprev.second - thick);
 					glVertex2d(pcur.first, pcur.second - thick);
@@ -85,14 +77,20 @@ void drawStick() {
 void work() {
 	clrscr();
 	drawStick();
+
 	X0 = 160, Y0 = 340, X1 = 210 + (itr * 3.0) / 4, Y1 = 390 - (itr * 2), X2 = 260 + (itr * 3.0) / 2, Y2 = 340;
 	solve();
-	X0 = 260 + (itr * 3.0) / 2, Y0 = 340, X1 = 310 + 3 * (itr * 3.0) / 4.0, Y1 = 290 + (itr * 2), X2 = 360 + (itr * 3.0), Y2 = 340;
+
+	X0 = 260 + (itr*3.0) / 2, Y0 = 340, X1 = 310 + 3*(itr*3.0) / 4, Y1 = 290 + (itr*2), X2 = 360 + (itr*3), Y2 = 340;
 	solve();
+
 	usleep(20000);
 	itr += incVal;
-	if (itr > 15)		incVal = -0.1;
-	else if (itr < 0)	incVal = 0.1;
+	if (itr > 15)		
+		incVal = -0.1;
+	else if (itr < 0)	
+		incVal = 0.1;
+
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
@@ -103,7 +101,11 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(500, 500);
 	glutCreateWindow("bezier");
-	init();
+
+	glMatrixMode(GL_PROJECTION);
+	gluOrtho2D(0, 500, 0, 500);
+	glMatrixMode(GL_MODELVIEW);
+
 	glutDisplayFunc(work);
 	glutMainLoop();
 }
